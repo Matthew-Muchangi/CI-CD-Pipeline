@@ -7,7 +7,7 @@ let Image = require('../models/images');
 
 // Home route
 router.get('/', (req, res) => {
-    Image.find({}, function(err, images) {
+    Image.find({}, function (err, images) {
         if (err) {
             console.error(err);
             // Send empty array if DB fails (so the page still loads)
@@ -49,3 +49,4 @@ router.post('/upload', (req, res) => {
 });
 
 module.exports = router;
+
