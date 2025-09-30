@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        RENDER_URL = "https://ci-cd-pipeline-4lnx.onrender.com"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -35,6 +39,16 @@ pipeline {
                     pm2 stop darkroom || true
                     pm2 start server.js --name darkroom
                 '''
+            }
+        }
+
+        stage('Notify') {
+            steps {
+                slackSend (
+                    channel: '#Matthew_IP1',
+                    color: 'good',
+                    message: "✅ Deployment successful!\nBuild: ${env.BUILD_NUMBER}\nJob: ${env.JOB_NAME}\nURL: ${env.RENDER_URL}"
+                )
             }
         }
     }
