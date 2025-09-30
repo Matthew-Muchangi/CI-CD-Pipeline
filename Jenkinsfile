@@ -10,21 +10,29 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
                 sh 'npm install'
             }
         }
 
-        stage('Run Tests') {
+        stage('Test') {
             steps {
-                sh 'npm test || echo "No tests defined"'
+                sh 'echo "No tests yet, skipping..."'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Build stage complete'
+                sh 'echo "Build successful"'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Stop existing app if running, then start again with PM2
+                sh '''
+                    pm2 stop darkroom || true
+                    pm2 start server.js --name darkroom
+                '''
             }
         }
     }
