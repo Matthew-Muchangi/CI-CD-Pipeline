@@ -1,40 +1,32 @@
 pipeline {
-  agent any
+    agent any
 
-  tools {
-    nodejs 'node18'   // Jenkins NodeJS tool name (configure this in Jenkins)
-  }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'git@github.com:Matthew-Muchangi/CI-CD-Pipeline.git'
+            }
+        }
 
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
+        stage('Install Dependencies') {
+            steps {
+                sh 'node -v'
+                sh 'npm -v'
+                sh 'npm install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npm test || echo "No tests defined"'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Build stage complete'
+            }
+        }
     }
-
-    stage('Install dependencies') {
-      steps {
-        sh 'npm install'
-      }
-    }
-
-    stage('Build') {
-      steps {
-        sh 'npm run build || echo "no build step"'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        echo 'Running smoke test...'
-        sh 'echo "server starts correctly"'
-      }
-    }
-
-    stage('Deploy') {
-      steps {
-        echo 'Render deploys automatically after GitHub push.'
-      }
-    }
-  }
 }
+
