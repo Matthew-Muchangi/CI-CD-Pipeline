@@ -10,20 +10,22 @@ let image = require('./routes/image');
 // Initialize the app (only once!)
 const app = express();
 
-// Connect the database
-let mongodb_url = 'mongodb://localhost:27017/';
-let dbName = 'darkroom';
-mongoose.connect(`${mongodb_url}${dbName}`, { 
+// MongoDB connection
+// ✅ Use environment variable for Render (MONGO_URL), fallback to localhost for dev
+const mongodb_url = process.env.MONGO_URL || 'mongodb://localhost:27017/darkroom';
+
+mongoose.connect(mongodb_url, { 
     useNewUrlParser: true, 
     useUnifiedTopology: true 
-}, (err) => {
-    if (err) console.log(err);
-});
+}).catch(err => console.error("❌ MongoDB connection error:", err));
 
 // Test if the database has connected successfully
 let db = mongoose.connection;
 db.once('open', () => {
-    console.log('Database connected successfully');
+    console.log('✅ Database connected successfully');
+});
+db.on('error', err => {
+    console.error('❌ Database connection error:', err.message);
 });
 
 // View Engine
