@@ -16,19 +16,21 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'echo "No tests yet, skipping..."'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'echo "Build successful"'
+                script {
+                    try {
+                        sh 'npm test'
+                    } catch (err) {
+                        mail to: 'matthewmuchangi@gmail.com',
+                             subject: "Build Failed in Jenkins: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                             body: "Tests failed. Check console output: ${env.BUILD_URL}"
+                        throw err
+                    }
+                }
             }
         }
 
         stage('Deploy') {
             steps {
-                // Stop existing app if running, then start again with PM2
                 sh '''
                     pm2 stop darkroom || true
                     pm2 start server.js --name darkroom
@@ -37,4 +39,3 @@ pipeline {
         }
     }
 }
-
